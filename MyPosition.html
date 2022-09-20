@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
+    <title>miotrekking.it - hiking map route planner</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/leaflet.css" />
+    <script src="js/leaflet.js"></script>
+    <script src="js/GPXParser.min.js"></script>
+    <style type="text/css">
+        /*  Always set the map height explicitly to define the size of the div element that contains the map.*/
+        #map {
+            height: 100%;
+            /*500px;*/
+        }
+        /* Optional: Makes the sample page fill the window. */
+        /* html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        } */
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div id="gpxSelection">
+
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 offset-md-1 offset-lg-2 offset-xl-2">
+                    <h4 style="text-align: center;">Hiking map route planner</h4>
+                    <h1 style="text-align: center;">Trekking e Luppoli</h1>
+                    <h3 style="text-align: center;">Segui un percorso di Trekking</h3>
+                    <p class="text-justify">
+                        <span>
+                            Funzionamento: seleziona il percorso tra quelli elencati, sulla mappa
+                            visualizzerai la traccia del percorso con un colore rosso mentre la tua posizione sarà visibile
+                            attraverso un marker azzurro.
+                            Durante la camminata monitora costantemente che il tuo marker (tua posizione) stia sempre sulla traccia indicata.
+                        </span>
+                        <br />
+                        <small>Nota: per il funzionamento su smartphone l'applicazione richiede che sia attiva la funzionalità di tracciamento GPS</small>
+                    </p>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 offset-md-1 offset-lg-2 offset-xl-2">
+
+                    <div>
+                        <label for="selPercorsi">Seleziona un percorso</label>
+                        <select id="selPercorsi" name="selPercorsi" class="form-select">
+                            <option value="" selected>--seleziona--</option>
+                            <option value="0000">[0000] Fossano (solo per testare l'app)</option>
+                            <option value="0001">
+                                [0001] Lequio Tanaro (CN) - da Baladin a Podere del Vescovo Country House
+                            </option>
+                            <option value="0002">
+                                [0002] Alba (CN) - Sentiero di S.Rosalia
+                            </option>
+                            <option value="0100">
+                                [0100] Dogliani (CN) - Percorso a '8' con due anelli
+                            </option>
+                        </select>
+                    </div>
+                    <div>
+                        <span id="lblMessageSelectGpx" style="color: red;"></span>
+                    </div>
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-success btn-lg" onclick="BtnSelectGpxClick();">
+                            visualizza
+                            sulla
+                            mappa
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 offset-md-1 offset-lg-2 offset-xl-2">
+                    <div class="mt-4">
+                        <p style="text-align:right;">
+                            <span style="font-size:smaller">
+                                powered by <a class="" href="https://www.artmedia.it/" target="_blank"
+                                              title="Artmedia software house Fossano (CN)">Artmedia</a>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div id="map"></div>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" data-bs-backdrop="static" id="modalInfo" tabindex="-1" aria-labelledby="modalInfoLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalInfoLabel">Info percorso</h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body">
+
+                    <div>
+                        <button type="button" class="btn btn-secondary" onclick="BtnBackMenuClick();">
+                            &lt;
+                            indietro
+                        </button>
+                    </div>
+
+                    <div class="mt-2">
+                        <h3>Dettaglio</h3>
+                    </div>
+
+                    <div class="mt-2">
+                        <div><span><strong>Descrizione</strong>: <span id="lblDescrizionePercorso"></span></span></div>
+                        <div><span></span><strong>Distanza</strong>: <span id="lblTotalDistance"></span></span></div>
+                        <div><span></span><strong>Dislivello</strong>: <span id="lblTotalElevation"></span></span></div>
+                    </div>
+
+                    <div class="mt-2">
+                        <label for="selCentraturaMappa">Centra la mappa su</label>
+                        <select id="selCentraturaMappa" name="selCentraturaMappa" class="form-select">
+                            <option value="1" selected>punto iniziale del percorso</option>
+                            <option value="2">punto finale del percorso</option>
+                            <option value="3">la mia posizione attuale</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <div style="text-align:center;">
+                            <button type="button" class="btn-success btn-lg" onclick="BtnCloseModalClick()">OK</button>
+                            <!-- data-bs-dismiss="modal" -->
+                        </div>
+                    </div>
+
+                </div>
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.6.1.min.js"></script>
+    <script>
+        var myPositionMarker;
+        var map;
+        var pointStart;//Point object
+        var pointEnd;//Point object
+        var pointCurrent;//Point object
+
+        // var map = L.map("map");
+        // L.tileLayer("https://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(map);
+        // map.setView([48.85, 2.35], 12);
+
+        $(document).ready(function () {
+            console.log("ready!");
+
+            let _codicePercorso = getUrlParameter('percorso');
+            console.log('getUrlParameter percorso=' + _codicePercorso);
+            if (_codicePercorso) {
+                let gpxFileName = getGpxNameByCode(_codicePercorso);
+                if (gpxFileName != "") {
+
+                    $('#gpxSelection').hide();
+                    $('#map').show();
+
+                    //reset height
+                    let _height = $(window).height();
+                    $('#map').css("height", _height);
+
+                    StartMap(gpxFileName);
+                    getLocation();
+                    OpenModalDetail();
+                    return;
+                }
+            }
+
+            $('#map').hide();
+            $('#gpxSelection').show();
+            //getLocation(); //esegue una volta sola all'avvio
+        });
+
+        var intervalId = window.setInterval(function () {
+
+            let _height = $(window).height();
+            var _displayProperty = $('#map').css("display");
+            if (_displayProperty != "none") {
+                $('#map').css("height", _height);
+            }
+
+            getLocation(); //esegue ogni x secondi
+
+        }, 5000);
+
+        function BtnSelectGpxClick() {
+
+            $('#lblMessageSelectGpx').text("");
+            let gpxOptionSelected = $("#selPercorsi").val();
+            if (gpxOptionSelected == "") {
+                $('#lblMessageSelectGpx').text("Seleziona un percorso");
+                return;
+            }
+
+            $('#gpxSelection').hide();
+            $('#map').show();
+
+            //reset height
+            let _height = $(window).height();
+            $('#map').css("height", _height);
+
+            let gpxFileName = getGpxNameByCode(gpxOptionSelected);
+
+            StartMap(gpxFileName);
+            getLocation();
+            OpenModalDetail();
+        }
+
+        function BtnCloseModalClick() {
+            CenterMap();
+            let myModalInfoObj = document.querySelector('#modalInfo')
+            let myModalInfo = bootstrap.Modal.getOrCreateInstance(myModalInfoObj) // Returns a Bootstrap modal instance
+            myModalInfo.hide();
+        }
+
+        function CenterMap() {
+            const zoom = 16;
+            let optionCentraturaMappa = $("#selCentraturaMappa").val();
+            switch (optionCentraturaMappa) {
+                case '1':
+                    // "1"=punto iniziale del percorso
+                    if (pointStart != null) {
+                        map.setView(pointStart, zoom);//map.getZoom());
+                        console.log('map centrata su inizio percorso');
+                        // console.log('pointStart=' + pointStart);
+                        // console.log('pointEnd=' + pointEnd);
+                        // console.log('current position=' + e.latlng);
+                    }
+                    break;
+                case '2':
+                    // "2"=punto finale del percorso
+                    if (pointEnd != null) {
+                        map.setView(pointEnd, zoom);//map.getZoom());
+                        console.log('map centrata su fine percorso');
+                    }
+                    break;
+                case '3':
+                    // "3"=la mia posizione attuale
+                    map.setView(pointCurrent, zoom);//map.getZoom());
+                    console.log('map centrata su posizione attuale');
+                    break;
+                default:
+            }
+
+        }
+
+        function StartMap(gpxFileName) {
+
+            map = L.map("map");
+            L.tileLayer("https://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(map);
+            map.setView([48.85, 2.35], 12);
+
+            if (gpxFileName != null) {
+                // var gpxOptionSelected = $("#selPercorsi").val();
+                // let gpxFileName = getGpxNameByCode(gpxOptionSelected);
+                fetch(gpxFileName)
+                    .then(function (response) {
+                        return response.text();
+                    }).then(function (gpxData) {
+                        // Parse gpxData here ...
+                        let gpx = new gpxParser();
+                        gpx.parse(gpxData);
+
+                        let totalDistance = gpx.tracks[0].distance.total;
+                        let totalElevation = gpx.tracks[0].elevation.pos;
+                        if (totalElevation == undefined) {
+                            totalElevation = '0';
+                        }
+                        if (totalElevation == null) {
+                            totalElevation = '0';
+                        }
+                        let totalDistanceInt = parseInt(totalDistance);
+                        let totalElevationInt = parseInt(totalElevation);
+
+                        $('#lblTotalDistance').text(totalDistanceInt + 'mt');
+                        $('#lblTotalElevation').text(totalElevationInt + 'mt');
+
+                        var pointsArray = gpx.tracks[0].points;
+                        // let pointStart;//Point object
+                        // let pointEnd;//Point object
+                        // let i = 0;
+                        let ii = 0;
+                        $.each(pointsArray, function (index, value) {
+                            if (index == 0) {
+                                pointStart = value;
+                            }
+                            if (index + 1 >= ii) {
+                                pointEnd = value;
+                                ii = index + 1;
+                            }
+                        });
+
+                        console.log('drawing map');
+                        drawTrack(gpx.tracks[0]);
+                    });
+
+            }
+        }
+
+        function drawTrack(track) {
+            let coordinates = track.points.map(p => [p.lat.toFixed(5), p.lon.toFixed(5)]);
+            var polyline = L.polyline(coordinates, { weight: 6, color: 'darkred' }).addTo(map);
+            // zoom the map to the polyline
+            map.fitBounds(polyline.getBounds());
+        }
+
+        function getLocation() {
+
+            try {
+                if (map) {
+
+                    map.locate({
+                        setView: false,
+                        enableHighAccuracy: true
+                    }).on('locationfound', function (e) {
+
+                        if (myPositionMarker == undefined) {
+                            pointCurrent = e.latlng;
+                            myPositionMarker = new L.marker(e.latlng);
+                            myPositionMarker.addTo(map);
+                            // } else {
+                            //     myPositionMarker.setLatLng(e.latlng);
+                        }
+                        myPositionMarker.setLatLng(e.latlng);
+                    });
+                    console.log('getLocation started successfully');
+                }
+            }
+            catch (err) {
+                console.log('getLocation error=' + err.message);
+            }
+        }
+
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+            return false;
+        };
+
+        var descrizionePercorso = "";
+        function getGpxNameByCode(code) {
+            let gpxFileName = "";
+            switch (code) {
+                case '0000':
+                    gpxFileName = 'GPX/0000_fossano.gpx'
+                    descrizionePercorso = "Fossano percorso cittadino 600mt per testare l'App";
+                    break;
+                case '0001':
+                    gpxFileName = 'GPX/0001_podere_del_vescovo-baladin_2022-06-11.gpx'
+                    descrizionePercorso = "Piozzo (CN), dal Podere del Vescovo Country House al parcheggio di Baladin, 4Km attraverso i boschi; dislivello: 200mt; difficoltà: facile; tempo di percorrenza: 1h";
+                    break;
+                case '0002':
+                    gpxFileName = 'GPX/0002_Sentiero_di_SRosalia.gpx'
+                    descrizionePercorso = "Alba (CN), Sentiero di S.Rosalia; difficoltà: medio-facile; tempo di percorrenza: 3h, lunghezza totale 11Km attorno a San Cassiano e Santa Rosalia; dislivello: 200mt";
+                    break;
+                case '0100':
+                    gpxFileName = 'GPX/0100_Dogliani.gpx'
+                    descrizionePercorso = "Dogliani (CN), percorso a '8', due anelli con fulcro su Dogliani: difficoltà: intermedia; lunghezza totale 17Km e dislivello di 1100mt";
+                    break;
+                default:
+                    console.log('gpxOptionSelected case else');
+            }
+            return gpxFileName;
+        }
+
+        function OpenModalDetail() {
+            let myModal = new bootstrap.Modal(document.getElementById('modalInfo'), {
+                keyboard: false
+            });
+            myModal.show();
+            $('#lblDescrizionePercorso').text(descrizionePercorso);
+        }
+
+        function BtnBackMenuClick() {
+            //location.reload(true);
+            var urlRoot = window.location.href.split('?')[0];//rimuovo il parameter percorso=0001
+            window.location.href = urlRoot;
+        }
+
+    </script>
+</body>
+
+</html>

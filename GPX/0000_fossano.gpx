@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="Maps 3D" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+	<trk>
+<name>fossano_2022-05-13</name>
+<extensions>
+<Maps3D:TrackExtensions xmlns:Maps3D="http://www.movingworld.de/xmlschemas/GpxExtensions/v1">
+<Maps3D:RealSpeed>5.071419</Maps3D:RealSpeed>
+<Maps3D:RealSecondsSpent>454</Maps3D:RealSecondsSpent>
+</Maps3D:TrackExtensions>
+</extensions>
+<trkseg>
+<trkpt lat="44.550423" lon="7.726312">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:28:03Z</time>
+</trkpt>
+<trkpt lat="44.550591" lon="7.726388">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:28:19Z</time>
+</trkpt>
+<trkpt lat="44.550734" lon="7.726479">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:28:35Z</time>
+</trkpt>
+<trkpt lat="44.550856" lon="7.726570">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:28:53Z</time>
+</trkpt>
+<trkpt lat="44.551071" lon="7.726540">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:29:09Z</time>
+</trkpt>
+<trkpt lat="44.551135" lon="7.726850">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:29:24Z</time>
+</trkpt>
+<trkpt lat="44.551140" lon="7.727164">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:29:39Z</time>
+</trkpt>
+<trkpt lat="44.551204" lon="7.727553">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:29:54Z</time>
+</trkpt>
+<trkpt lat="44.551141" lon="7.727801">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:30:10Z</time>
+</trkpt>
+<trkpt lat="44.551294" lon="7.727894">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:30:25Z</time>
+</trkpt>
+<trkpt lat="44.551505" lon="7.727988">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:30:41Z</time>
+</trkpt>
+<trkpt lat="44.551693" lon="7.728088">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:30:56Z</time>
+</trkpt>
+<trkpt lat="44.551868" lon="7.728291">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:31:11Z</time>
+</trkpt>
+<trkpt lat="44.551972" lon="7.728167">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:31:29Z</time>
+</trkpt>
+<trkpt lat="44.551996" lon="7.727884">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:31:44Z</time>
+</trkpt>
+<trkpt lat="44.552021" lon="7.727589">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:31:59Z</time>
+</trkpt>
+<trkpt lat="44.552053" lon="7.727289">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:32:15Z</time>
+</trkpt>
+<trkpt lat="44.552071" lon="7.726998">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:32:30Z</time>
+</trkpt>
+<trkpt lat="44.552113" lon="7.726691">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:32:46Z</time>
+</trkpt>
+<trkpt lat="44.552005" lon="7.726469">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:33:02Z</time>
+</trkpt>
+<trkpt lat="44.551853" lon="7.726267">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:33:18Z</time>
+</trkpt>
+<trkpt lat="44.551699" lon="7.726310">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:33:34Z</time>
+</trkpt>
+<trkpt lat="44.551397" lon="7.726301">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:33:50Z</time>
+</trkpt>
+<trkpt lat="44.551250" lon="7.726265">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:34:06Z</time>
+</trkpt>
+<trkpt lat="44.551034" lon="7.726248">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:34:21Z</time>
+</trkpt>
+<trkpt lat="44.550825" lon="7.726239">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:34:36Z</time>
+</trkpt>
+<trkpt lat="44.550742" lon="7.726424">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:34:54Z</time>
+</trkpt>
+<trkpt lat="44.550512" lon="7.726378">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:35:10Z</time>
+</trkpt>
+<trkpt lat="44.550319" lon="7.726303">
+   <ele>360.000000</ele>
+   <time>2022-05-13T05:35:26Z</time>
+</trkpt>
+</trkseg></trk></gpx>
