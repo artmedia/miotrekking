@@ -7,17 +7,27 @@
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
     <title>miotrekking.it - hiking map route planner</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/leaflet.css" />
-    <script src="js/leaflet.js"></script>
-    <script src="js/GPXParser.min.js"></script>
+    <!-- leaflet -->
+    <link href="node_modules/leaflet/dist/leaflet.css" rel="stylesheet" />
+    <script src="node_modules/leaflet/dist/leaflet.js"></script>
+    <script src="node_modules/gpxparser/dist/GPXParser.min.js"></script>
+
+    <!-- Using https://allartk.github.io/leaflet.offline -->
+    <!--
+        <script src="node_modules/idb/build/umd.js"></script>
+        <script src="node_modules/leaflet.offline/dist/bundle.js"></script>
+        -->
+    <!-- Using https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached -->
+    <script src="node_modules/pouchdb/dist/pouchdb.min.js"></script>
+    <script src="node_modules/leaflet.tilelayer.pouchdbcached/L.TileLayer.PouchDBCached.js"></script>
     <style type="text/css">
         /*  Always set the map height explicitly to define the size of the div element that contains the map.*/
         #map {
             height: 100%;
             /*500px;*/
         }
+
         /* Optional: Makes the sample page fill the window. */
         /* html,
         body {
@@ -36,17 +46,20 @@
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 offset-md-1 offset-lg-2 offset-xl-2">
                     <h4 style="text-align: center;">Hiking map route planner</h4>
-                    <h1 style="text-align: center;">Trekking e Luppoli</h1>
+                    <h1 style="text-align: center;">Trekking</h1>
                     <h3 style="text-align: center;">Segui un percorso di Trekking</h3>
                     <p class="text-justify">
                         <span>
                             Funzionamento: seleziona il percorso tra quelli elencati, sulla mappa
-                            visualizzerai la traccia del percorso con un colore rosso mentre la tua posizione sarà visibile
+                            visualizzerai la traccia del percorso con un colore rosso mentre la tua posizione sarà
+                            visibile
                             attraverso un marker azzurro.
-                            Durante la camminata monitora costantemente che il tuo marker (tua posizione) stia sempre sulla traccia indicata.
+                            Durante la camminata monitora costantemente che il tuo marker (tua posizione) stia sempre
+                            sulla traccia indicata.
                         </span>
                         <br />
-                        <small>Nota: per il funzionamento su smartphone l'applicazione richiede che sia attiva la funzionalità di tracciamento GPS</small>
+                        <small>Nota: per il funzionamento su smartphone l'applicazione richiede che sia attiva la
+                            funzionalità di tracciamento GPS</small>
                     </p>
                 </div>
             </div>
@@ -90,7 +103,7 @@
                         <p style="text-align:right;">
                             <span style="font-size:smaller">
                                 powered by <a class="" href="https://www.artmedia.it/" target="_blank"
-                                              title="Artmedia software house Fossano (CN)">Artmedia</a>
+                                    title="Artmedia software house Fossano (CN)">Artmedia</a>
                             </span>
                         </p>
                     </div>
@@ -106,7 +119,7 @@
 
     <!-- Modal -->
     <div class="modal fade" data-bs-backdrop="static" id="modalInfo" tabindex="-1" aria-labelledby="modalInfoLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -128,8 +141,8 @@
 
                     <div class="mt-2">
                         <div><span><strong>Descrizione</strong>: <span id="lblDescrizionePercorso"></span></span></div>
-                        <div><span></span><strong>Distanza</strong>: <span id="lblTotalDistance"></span></span></div>
-                        <div><span></span><strong>Dislivello</strong>: <span id="lblTotalElevation"></span></span></div>
+                        <div><span><strong>Distanza</strong>: <span id="lblTotalDistance"></span></span></div>
+                        <div><span><strong>Dislivello</strong>: <span id="lblTotalElevation"></span></span></div>
                     </div>
 
                     <div class="mt-2">
@@ -143,7 +156,8 @@
 
                     <div class="mt-4">
                         <div style="text-align:center;">
-                            <button type="button" class="btn-success btn-lg" onclick="BtnCloseModalClick()">OK</button>
+                            <button type="button" class="btn btn-success btn-lg"
+                                onclick="BtnCloseModalClick()">OK</button>
                             <!-- data-bs-dismiss="modal" -->
                         </div>
                     </div>
@@ -186,7 +200,7 @@
                     $('#map').css("height", _height);
 
                     StartMap(gpxFileName);
-                    getLocation();
+                    GetLocation();
                     OpenModalDetail();
                     return;
                 }
@@ -194,7 +208,7 @@
 
             $('#map').hide();
             $('#gpxSelection').show();
-            //getLocation(); //esegue una volta sola all'avvio
+            //GetLocation(); //esegue una volta sola all'avvio
         });
 
         var intervalId = window.setInterval(function () {
@@ -205,7 +219,7 @@
                 $('#map').css("height", _height);
             }
 
-            getLocation(); //esegue ogni x secondi
+            GetLocation(); //esegue ogni x secondi
 
         }, 5000);
 
@@ -228,7 +242,7 @@
             let gpxFileName = getGpxNameByCode(gpxOptionSelected);
 
             StartMap(gpxFileName);
-            getLocation();
+            GetLocation();
             OpenModalDetail();
         }
 
@@ -240,7 +254,7 @@
         }
 
         function CenterMap() {
-            const zoom = 16;
+            const zoom = 18;
             let optionCentraturaMappa = $("#selCentraturaMappa").val();
             switch (optionCentraturaMappa) {
                 case '1':
@@ -270,11 +284,28 @@
 
         }
 
+
+        // Seed the base layer, for the whole world, for zoom levels zoomMin through zoomMax.
+        function seed(latTopLeft, lonTopLeft, latBottomRight, lonBottomRight, zoomMin , zoomMax) {
+            var bbox = L.latLngBounds(L.latLng(latTopLeft, lonTopLeft), L.latLng(latBottomRight, lonBottomRight));
+            layer.seed(bbox, zoomMin, zoomMax);
+        }
+
+        var layer;
         function StartMap(gpxFileName) {
 
             map = L.map("map");
-            L.tileLayer("https://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(map);
-            map.setView([48.85, 2.35], 12);
+            layer = L.tileLayer("https://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+                maxZoom: 18,
+                minZoom: 14,
+
+                useCache: true,
+                crossOrigin: true
+            });
+            layer.addTo(map);
+            L.control.scale().addTo(map);
+            // map.setView([48.85, 2.35], 12);
+            map.setView([48.85, 2.35], 16);
 
             if (gpxFileName != null) {
                 // var gpxOptionSelected = $("#selPercorsi").val();
@@ -304,7 +335,6 @@
                         var pointsArray = gpx.tracks[0].points;
                         // let pointStart;//Point object
                         // let pointEnd;//Point object
-                        // let i = 0;
                         let ii = 0;
                         $.each(pointsArray, function (index, value) {
                             if (index == 0) {
@@ -318,9 +348,84 @@
 
                         console.log('drawing map');
                         drawTrack(gpx.tracks[0]);
-                    });
 
+
+                        /*
+                         Ogni X metri (distanceKm) tra due punti del percorso GPX
+                         carica in cache il layer con le dimensioni di un quadrato di lato (2*raggio) 
+                        */
+                        const raggio = 50; //meters
+                        const distanceKm = .03 //Km 
+                        const zoomMin = 14;
+                        const zoomMax = 18;
+                        let pointN;
+                        let pointNmeno1;
+                        $.each(pointsArray, function (index, value) {
+                            if (index == 0) {
+                                pointNmeno1 = value;
+                                let latLngOfPointNmeno1 = new L.latLng(pointNmeno1.lat, pointNmeno1.lon);
+                                let latLngTopLeft = GetLatLngByDistance(latLngOfPointNmeno1, raggio*-1, raggio*-1);
+                                let latLngBottomRight = GetLatLngByDistance(latLngOfPointNmeno1, raggio, raggio);
+                                console.log('seed for index=' + index);                    
+                                seed(latLngTopLeft.lat, latLngTopLeft.lng, latLngBottomRight.lat, latLngBottomRight.lng, zoomMin, zoomMax);
+                            }
+
+                            pointN = value;
+                            let latLngOfPointN = new L.latLng(pointN.lat, pointN.lon);
+                            let latLngTopLeftOfPointN = GetLatLngByDistance(latLngOfPointN, raggio*-1, raggio*-1);
+                            let latLngBottomRightOfPointN = GetLatLngByDistance(latLngOfPointN, raggio, raggio);
+                            let distanceKmBetweenPoints = getDistanceKmBetweenPoints(pointNmeno1.lat, pointNmeno1.lon, pointN.lat, pointN.lon);
+                            if ( distanceKmBetweenPoints > distanceKm) {
+                                pointNmeno1 = value;
+                                console.log('seed for index=' + index + ";distanceKmBetweenPoints=" + distanceKmBetweenPoints); 
+                                seed(latLngTopLeftOfPointN.lat, latLngTopLeftOfPointN.lng, latLngBottomRightOfPointN.lat, latLngBottomRightOfPointN.lng, zoomMin, zoomMax);
+                            }
+
+                        });
+
+                    });
             }
+
+            // Display seed progress on console
+            layer.on('seedprogress', function (seedData) {
+                var percent = 100 - Math.floor(seedData.remainingLength / seedData.queueLength * 100);
+                console.log('Seeding ' + percent + '% done');
+            });
+            layer.on('seedend', function (seedData) {
+                console.log('Cache seeding complete');
+            });
+        }
+
+
+        function getDistanceKmBetweenPoints(lat1, lon1, lat2, lon2) {
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+            var dLon = deg2rad(lon2 - lon1);
+            var a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+                ;
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c; // Distance in km
+            return d;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180)
+        }
+
+
+        /*
+         * Returns the destination point from this point having travelled the given distance (in meters) 
+         */
+        function GetLatLngByDistance(latlng, metersY, metersX) {
+            //metersX, metersY: offsets from your initial position in meters
+            let lat0 = latlng.lat;
+            let lon0 = latlng.lng;
+            lat = lat0 + (180 / Math.PI) * (metersY / 6378137);
+            lon = lon0 + (180 / Math.PI) * (metersX / 6378137) / Math.cos(lat0);
+            return new L.latLng(lat, lon);
         }
 
         function drawTrack(track) {
@@ -330,7 +435,7 @@
             map.fitBounds(polyline.getBounds());
         }
 
-        function getLocation() {
+        function GetLocation() {
 
             try {
                 if (map) {
@@ -346,14 +451,16 @@
                             myPositionMarker.addTo(map);
                             // } else {
                             //     myPositionMarker.setLatLng(e.latlng);
+
                         }
                         myPositionMarker.setLatLng(e.latlng);
+
                     });
-                    console.log('getLocation started successfully');
+                    console.log('GetLocation started successfully');
                 }
             }
             catch (err) {
-                console.log('getLocation error=' + err.message);
+                console.log('GetLocation error=' + err.message);
             }
         }
 
@@ -378,19 +485,19 @@
             let gpxFileName = "";
             switch (code) {
                 case '0000':
-                    gpxFileName = 'GPX/0000_fossano.gpx'
+                    gpxFileName = 'gpx/0000_fossano.gpx'
                     descrizionePercorso = "Fossano percorso cittadino 600mt per testare l'App";
                     break;
                 case '0001':
-                    gpxFileName = 'GPX/0001_podere_del_vescovo-baladin_2022-06-11.gpx'
+                    gpxFileName = 'gpx/0001_podere_del_vescovo-baladin_2022-06-11.gpx'
                     descrizionePercorso = "Piozzo (CN), dal Podere del Vescovo Country House al parcheggio di Baladin, 4Km attraverso i boschi; dislivello: 200mt; difficoltà: facile; tempo di percorrenza: 1h";
                     break;
                 case '0002':
-                    gpxFileName = 'GPX/0002_Sentiero_di_SRosalia.gpx'
+                    gpxFileName = 'gpx/0002_Sentiero_di_SRosalia.gpx'
                     descrizionePercorso = "Alba (CN), Sentiero di S.Rosalia; difficoltà: medio-facile; tempo di percorrenza: 3h, lunghezza totale 11Km attorno a San Cassiano e Santa Rosalia; dislivello: 200mt";
                     break;
                 case '0100':
-                    gpxFileName = 'GPX/0100_Dogliani.gpx'
+                    gpxFileName = 'gpx/0100_Dogliani.gpx'
                     descrizionePercorso = "Dogliani (CN), percorso a '8', due anelli con fulcro su Dogliani: difficoltà: intermedia; lunghezza totale 17Km e dislivello di 1100mt";
                     break;
                 default:

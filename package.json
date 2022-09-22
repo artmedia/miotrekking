@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "gpxparser": "^3.0.8",
+    "idb": "^7.0.2",
+    "leaflet": "^1.8.0",
+    "leaflet.offline": "^3.0.0-rc.1",
+    "leaflet.tilelayer.pouchdbcached": "^1.0.0",
+    "pouchdb": "^7.3.0"
+  }
+}
