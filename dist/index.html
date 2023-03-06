@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="Luca's mioTrekking - Hiking map route planner">
+    <meta name="author" content="Luca Bongioanni">
+    <title>miotrekking.it - hiking map route planner</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <base href="./">
+
+    <!-- PWA setting -->
+    <link rel="manifest" href="manifest.json" />
+    <!-- Fallback application metadata for legacy browsers -->
+    <meta name="application-name" content="mioTrekking">
+    <link rel="icon" sizes="48x48" href="/images/icons/icon-48x48.png" />
+    <link rel="icon" sizes="64x64" href="/images/icons/icon-64x64.png" />
+    <link rel="icon" sizes="72x72" href="/images/icons/icon-72x72.png" />
+    <link rel="icon" sizes="96x96" href="/images/icons/icon-96x96.png" />
+    <link rel="icon" sizes="128x128" href="/images/icons/icon-128x128.png" />
+    <link rel="icon" sizes="144x144" href="/images/icons/icon-144x144.png" />
+    <link rel="icon" sizes="152x152" href="/images/icons/icon-152x152.png" />
+    <link rel="icon" sizes="192x192" href="/images/icons/icon-192x192.png" />
+    <link rel="icon" sizes="384x384" href="/images/icons/icon-384x384.png" />
+    <link rel="icon" sizes="512x512" href="/images/icons/icon-512x512.png" />
+
+    <!-- ios support -->
+    <link rel="apple-touch-icon" href="/images/icons/icon-48x48.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-64x64.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-72x72.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-96x96.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-128x128.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-144x144.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-384x384.png" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-512x512.png" />
+    <meta name="apple-mobile-web-app-status-bar" content="#db4938" />
+    <meta name="theme-color" content="#db4938" />
+
+    <link href="css/leaflet.css" rel="stylesheet" />
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        /*  Always set the map height explicitly to define the size of the div element that contains the map.*/
+        #map {
+            height: 100%;
+            /*500px;*/
+        }
+        /* Optional: Makes the sample page fill the window. */
+        /* html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        } */
+        /*.lds-spinner {
+            color: official;
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+            .lds-spinner div {
+                transform-origin: 40px 40px;
+                animation: lds-spinner 1.2s linear infinite;
+            }
+
+                .lds-spinner div:after {
+                    content: " ";
+                    display: block;
+                    position: absolute;
+                    top: 3px;
+                    left: 37px;
+                    width: 6px;
+                    height: 18px;
+                    border-radius: 20%;
+                    background: #fff;
+                }
+
+                .lds-spinner div:nth-child(1) {
+                    transform: rotate(0deg);
+                    animation-delay: -1.1s;
+                }
+
+                .lds-spinner div:nth-child(2) {
+                    transform: rotate(30deg);
+                    animation-delay: -1s;
+                }
+
+                .lds-spinner div:nth-child(3) {
+                    transform: rotate(60deg);
+                    animation-delay: -0.9s;
+                }
+
+                .lds-spinner div:nth-child(4) {
+                    transform: rotate(90deg);
+                    animation-delay: -0.8s;
+                }
+
+                .lds-spinner div:nth-child(5) {
+                    transform: rotate(120deg);
+                    animation-delay: -0.7s;
+                }
+
+                .lds-spinner div:nth-child(6) {
+                    transform: rotate(150deg);
+                    animation-delay: -0.6s;
+                }
+
+                .lds-spinner div:nth-child(7) {
+                    transform: rotate(180deg);
+                    animation-delay: -0.5s;
+                }
+
+                .lds-spinner div:nth-child(8) {
+                    transform: rotate(210deg);
+                    animation-delay: -0.4s;
+                }
+
+                .lds-spinner div:nth-child(9) {
+                    transform: rotate(240deg);
+                    animation-delay: -0.3s;
+                }
+
+                .lds-spinner div:nth-child(10) {
+                    transform: rotate(270deg);
+                    animation-delay: -0.2s;
+                }
+
+                .lds-spinner div:nth-child(11) {
+                    transform: rotate(300deg);
+                    animation-delay: -0.1s;
+                }
+
+                .lds-spinner div:nth-child(12) {
+                    transform: rotate(330deg);
+                    animation-delay: 0s;
+                }
+
+        @keyframes lds-spinner {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }*/
+
+    </style>
+</head>
+
+<body>
+    <noscript>Your browser does not support JavaScript!</noscript>
+
+    <div class="container-fluid">
+
+        <!-- INSTALL PWA button -->
+        <div class="row pwaInstall">
+            <div class="col-sm-12 col-12">
+                <div id="divInstall" style="background-color: red;">
+                    <div style="height:20px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row pwaInstall">
+            <div class="col-sm-12 col-12">
+                <div>
+                    <h4 class="text-center"><span>Vuoi installare questa App?</span></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row pwaInstall">
+            <div class="col-sm-12 col-12">
+                <div id="txtInstall">
+                    <!-- msg pwa install -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row pwaInstall mt-3 mb-3">
+            <div class="col-6 col-md-3 col-lg-3 col-xl-3 offset-md-3 offset-lg-3 offset-xl-3">
+                <div style="text-align: right;">
+                    <button type="button" id="btnInstall" class="btn btn-success btn-lg">INSTALLA</button>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 col-lg-3 col-xl-3">
+                <div>
+                    <button type="button" id="btnNoInstall" class="btn btn-secondary btn-lg">NO, GRAZIE</button>
+                </div>
+            </div>
+        </div>
+        <!-- /INSTALL PWA button -->
+
+        <div id="gpxSelection">
+
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 offset-md-1 offset-lg-2 offset-xl-2">
+                    <h4 style="text-align: center;">Hiking map route planner</h4>
+                    <h1 style="text-align: center;">Mio Trekking</h1>
+                    <h3 style="text-align: center;">Segui un percorso di Trekking</h3>
+                    <p class="text-justify">
+                        <span>
+                            Funzionamento: seleziona il percorso tra quelli elencati, sulla mappa
+                            visualizzerai la traccia del percorso con un colore rosso mentre la tua posizione sarà
+                            visibile
+                            attraverso un marker azzurro.
+                            Durante la camminata monitora costantemente che il tuo marker (tua posizione) stia sempre
+                            sulla traccia indicata.
+                        </span>
+                        <br />
+                        <small>
+                            Nota: per il funzionamento su smartphone l'applicazione richiede che sia attiva la
+                            funzionalità di tracciamento GPS
+                        </small>
+                    </p>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 offset-md-1 offset-lg-2 offset-xl-2">
+
+                    <div>
+                        <label for="selPercorsi">Seleziona un percorso</label>
+                        <select id="selPercorsi" name="selPercorsi" class="form-select">
+                            <option value="" selected>--seleziona--</option>
+                            <option value="0000">[0000] Fossano (solo per testare l'app)</option>
+                            <option value="0001">
+                                [0001] Lequio Tanaro (CN) - da Baladin a Podere del Vescovo Country House
+                            </option>
+                            <option value="0002">
+                                [0002] Alba (CN) - Sentiero di S.Rosalia
+                            </option>
+                            <option value="0100">
+                                [0100] Dogliani (CN) - Percorso a '8' con due anelli
+                            </option>                            
+                            <option value="0101">
+                                [0101] Clavesana (CN) - Anello 7Km
+                            </option>
+                        </select>
+                    </div>
+                    <div>
+                        <span id="lblMessageSelectGpx" style="color: red;"></span>
+                    </div>
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-success btn-lg" onclick="BtnSelectGpxClick();">
+                            visualizza
+                            sulla
+                            mappa
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 offset-md-1 offset-lg-2 offset-xl-2">
+                    <div class="mt-4">
+                        <p style="text-align:right;">
+                            <span style="font-size:smaller">
+                                powered by <a class="" href="https://www.artmedia.it" target="_blank"
+                                              title="Artmedia software house Fossano (CN)">Artmedia</a>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div id="map"></div>
+
+    </div>
+
+        <!-- Modal -->
+        <div class="modal fade" data-bs-backdrop="static" id="modalInfo" tabindex="-1" aria-labelledby="modalInfoLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalInfoLabel">Info percorso</h5>
+                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                    </div>
+                    <div class="modal-body">
+
+                        <div>
+                            <button type="button" class="btn btn-secondary" onclick="BtnBackMenuClick();">
+                                &lt;
+                                indietro
+                            </button>
+                        </div>
+
+                        <div class="mt-2">
+                            <h3>Dettaglio</h3>
+                        </div>
+                        <div class="mt-2">
+                            <div id="lblPercDownload"></div>
+                            <!--<div id="boxSpinnerPercDownload">
+                            <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                        </div>-->
+                        </div>
+                        <div class="mt-2">
+                            <div><span><strong>Descrizione</strong>: <span id="lblDescrizionePercorso"></span></span></div>
+                            <div><span><strong>Distanza</strong>: <span id="lblTotalDistance"></span></span></div>
+                            <div><span><strong>Dislivello</strong>: <span id="lblTotalElevation"></span></span></div>
+                        </div>
+
+                        <div class="mt-2">
+                            <label for="selCentraturaMappa">Centra la mappa su</label>
+                            <select id="selCentraturaMappa" name="selCentraturaMappa" class="form-select">
+                                <option value="1" selected>punto iniziale del percorso</option>
+                                <option value="2">punto finale del percorso</option>
+                                <option value="3">la mia posizione attuale</option>
+                            </select>
+                        </div>
+
+                        <div class="mt-4">
+                            <div style="text-align:center;">
+                                <button type="button" class="btn btn-success btn-lg"
+                                        onclick="BtnCloseModalClick()">
+                                    OK
+                                </button>
+                                <!-- data-bs-dismiss="modal" -->
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div> -->
+                </div>
+            </div>
+        </div>
+
+        <script src="/js/jquery-3.6.1.min.js"></script>
+        <script type="text/javascript">
+
+            var strHtmlLog = '<span class="text-secondary">.</span>';
+            $('#txtInstall').append(strHtmlLog);//.css('color', 'blue');
+
+            navigator.serviceWorker.register('/ServiceWorker.js').then(registration => {
+                console.log("ServiceWorker.js register success!");
+                strHtmlLog = '<br /><span class="text-success">ServiceWorker.js register success!</span>';
+                $('#txtInstall').append(strHtmlLog);//.css('color', 'green');
+                if (registration.installing) {
+                    registration.installing.postMessage("Howdy from your installing page.");
+                }
+            }, err => {
+                strHtmlLog = '<br /><span class="text-danger">Installing the worker failed!</span> ' + err;
+                $('#txtInstall').append(strHtmlLog);//.css('color', 'red');
+                console.error("Installing the worker failed!", err);
+                alert("Installing the worker failed! " + err);
+            });
+
+            //var divInstall = document.getElementsByClassName("pwaInstallZone");
+            var btnInstall = document.getElementById("btnInstall");
+            var btnNoInstall = document.getElementById("btnNoInstall");
+            var deferredPrompt; //Save a reference to the event
+
+            //$(window).on('beforeinstallprompt', function (e) {
+
+            //    strHtmlLog = "<br />Notify the user they can install the PWA; show the install button container! ";
+            //    $('#txtInstall').append(strHtmlLog).css('color', 'black');
+            //    console.log('beforeinstallprompt Event fired');
+            //    e.preventDefault();
+            //    // Stash the event so it can be triggered later.
+            //    deferredPrompt = e.originalEvent;
+
+            //    divInstall.setAttribute("style", "background-color:green;padding-top:5px;padding-bottom:5px;text-align:center;");
+            //    return false;
+            //});
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+
+                strHtmlLog = '<br /><span class="text-success">Notify the user they can install the PWA; show the install button!</span>';
+                $('#txtInstall').append(strHtmlLog);//.css('color', 'red');
+
+                // Prevent the mini-infobar from appearing on mobile
+                e.preventDefault();
+
+                // Stash the event so it can be triggered later.
+                deferredPrompt = e;
+                // Notify the user they can install the PWA; show the install button container
+                
+                //divInstall.setAttribute("style", "background-color:green;padding-top:5px;padding-bottom:5px;text-align:center;");
+                $('#divInstall').css("background-color", "green");
+
+            }, err => {
+                strHtmlLog = '<br /><span class="text-danger">beforeinstallprompt failed! ' + err + '</span>';
+                $('#txtInstall').append(strHtmlLog);//.css('color', 'red');
+                console.error("beforeinstallprompt failed!", err);
+                alert("beforeinstallprompt failed! " + err)
+            });
+
+            btnNoInstall.addEventListener('click', () => {
+                $('.pwaInstall').hide();
+                console.log('Hide the install button');
+            });
+
+            btnInstall.addEventListener('click', () => {
+
+                console.log('INSTALL: btnInstall clicked');
+                strHtmlLog = '<br />btnInstall clicked';
+                $('#txtInstall').append(strHtmlLog);//.css('color', 'red');
+
+                if (!deferredPrompt) {
+                    // The deferred prompt isn't available.
+                    console.log('INSTALL: The deferred prompt is not available');
+
+                    strHtmlLog = '<br /><span class="text-danger">The deferred prompt is not available</span>';
+                    $('#txtInstall').append(strHtmlLog);//.css('color', 'red');
+                    return;
+                }
+
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+
+                        console.log('INSTALL: User accepted the install prompt');
+                        strHtmlLog = '<br />User accepted the install prompt';
+                        $('#txtInstall').append(strHtmlLog);//.css('color', 'black');
+
+                        // Reset the deferred prompt variable, since prompt() can only be called once.
+                        // window.deferredPrompt = null;
+                        deferredPrompt = null;
+
+                    } else {
+                        console.log('User dismissed the install prompt');
+                        strHtmlLog = '<br /><span class="text-danger">User dismissed the install prompt</span>';
+                        $('#txtInstall').append(strHtmlLog);//.css('color', 'black');
+                    }
+                    // Hide the install button.
+                    //divInstall.setAttribute("style", "display:none;");
+                    $('.pwaInstall').hide();
+                    console.log('INSTALL: Hide the install button');
+                });
+
+            });
+
+            window.addEventListener('appinstalled', (evt) => {
+                //alert("appinstalled");
+
+                strHtmlLog = '<br />app installed';
+                $('#txtInstall').append(strHtmlLog);//.css('color', 'black');
+
+                // Log install
+                console.log('app installed event');
+                //alert("install successfully completed!");
+                //divInstall.setAttribute("style", "display:none;");
+                $('.pwaInstall').hide();
+                console.log('app installed: Hide the install button');
+
+                // Store informazione App installed
+                localStorage.setItem("appinstalled", true);
+            });
+
+            // l'app è installata? verifico nel LocalStorage (non ha scadenza)
+            if (!(localStorage.getItem("appinstalled") == null | localStorage.getItem("appinstalled") == undefined)) {
+                //var isAppInstalled = $.parseJSON((localStorage.getItem("appinstalled")).toLowerCase());
+                var isAppInstalled = JSON.parse((localStorage.getItem("appinstalled")).toLowerCase());
+                if (isAppInstalled) {
+                    //divInstall.setAttribute("style", "display:none;");
+                    $('.pwaInstall').hide();
+
+                    strHtmlLog = '<br />LocalStorage ok';
+                    $('#txtInstall').append(strHtmlLog);//.css('color', 'black');
+                }
+            }
+        </script>
+
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <script src="./main.js"></script>
+        <script src="/js/GPXParser.min.js"></script>
+        <script src="/js/pouchdb.js"></script>
+        <script src="/js/L.TileLayer.PouchDBCached.js"></script>
+        <script>
+            var myPositionMarker;
+            var map;
+            var pointStart;//Point object
+            var pointEnd;//Point object
+            var pointCurrent;//Point object
+
+            //var map = L.map("map");
+            //L.tileLayer("https://{s}.tile.osm.org/{z}/{x}/{y}.png").addTo(map);
+            //map.setView([48.85, 2.35], 12);
+
+            $(document).ready(function () {
+                console.log("ready!");
+
+                let _codicePercorso = getUrlParameter('percorso');
+                console.log('getUrlParameter percorso=' + _codicePercorso);
+                if (_codicePercorso) {
+                    let gpxFileName = getGpxNameByCode(_codicePercorso);
+                    if (gpxFileName != "") {
+
+                        $('#gpxSelection').hide();
+                        $('#map').show();
+
+                        //reset height
+                        let _height = $(window).height();
+                        $('#map').css("height", _height);
+
+                        StartMap(gpxFileName);
+                        GetLocation();
+                        OpenModalDetail();
+                        return;
+                    }
+                }
+
+                $('#map').hide();
+                $('#gpxSelection').show();
+                //GetLocation(); //esegue una volta sola all'avvio
+            });
+
+            var intervalId = window.setInterval(function () {
+
+                let _height = $(window).height();
+                var _displayProperty = $('#map').css("display");
+                if (_displayProperty != "none") {
+                    $('#map').css("height", _height);
+                }
+
+                GetLocation(); //esegue ogni x secondi
+
+            }, 5000);
+
+            function BtnSelectGpxClick() {
+
+                $('#lblMessageSelectGpx').text("");
+                let gpxOptionSelected = $("#selPercorsi").val();
+                if (gpxOptionSelected == "") {
+                    $('#lblMessageSelectGpx').text("Seleziona un percorso");
+                    return;
+                }
+
+                $('#gpxSelection').hide();
+                $('#map').show();
+
+                //reset height
+                let _height = $(window).height();
+                $('#map').css("height", _height);
+
+                let gpxFileName = getGpxNameByCode(gpxOptionSelected);
+
+                StartMap(gpxFileName);
+                GetLocation();
+                OpenModalDetail();
+            }
+
+            function BtnCloseModalClick() {
+                CenterMap();
+                let myModalInfoObj = document.querySelector('#modalInfo')
+                let myModalInfo = bootstrap.Modal.getOrCreateInstance(myModalInfoObj) // Returns a Bootstrap modal instance
+                myModalInfo.hide();
+            }
+
+            function CenterMap() {
+                const zoom = 18;
+                let optionCentraturaMappa = $("#selCentraturaMappa").val();
+                switch (optionCentraturaMappa) {
+                    case '1':
+                        // 1=punto iniziale del percorso
+                        if (pointStart != null) {
+                            map.setView(pointStart, zoom);//map.getZoom());
+                            console.log('map centrata su inizio percorso');
+                            //console.log('pointStart=' + pointStart);
+                            //console.log('pointEnd=' + pointEnd);
+                            //console.log('current position=' + e.latlng);
+                        }
+                        break;
+                    case '2':
+                        // 2=punto finale del percorso
+                        if (pointEnd != null) {
+                            map.setView(pointEnd, zoom);//map.getZoom());
+                            console.log('map centrata su fine percorso');
+                        }
+                        break;
+                    case '3':
+                        // 3=la mia posizione attuale
+                        map.setView(pointCurrent, zoom);//map.getZoom());
+                        console.log('map centrata su posizione attuale');
+                        break;
+                    default:
+                }
+
+            }
+
+
+
+            var pointsCount;
+            var indexOfCurrentPoint;
+            var totalPercDownload;
+            var layer;
+            function StartMap(gpxFileName) {
+
+                pointsCount = 0;//reset
+                indexOfCurrentPoint = 0;//reset
+                totalPercDownload = 0;//reset percentuale download
+                $('#lblPercDownload').empty().css("color", "black");//reset testo percentuale download
+                //$('#boxSpinnerPercDownload').hide();
+
+                map = L.map("map");
+                layer = L.tileLayer("https://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+                    maxZoom: 18,
+                    minZoom: 14,
+
+                    useCache: true,
+                    crossOrigin: true
+                });
+                layer.addTo(map);
+                L.control.scale().addTo(map);
+                //map.setView([48.85, 2.35], 12);
+                map.setView([48.85, 2.35], 16);
+
+                if (gpxFileName != null) {
+                    //var gpxOptionSelected = $("#selPercorsi").val();
+                    //let gpxFileName = getGpxNameByCode(gpxOptionSelected);
+                    fetch(gpxFileName)
+                        .then(function (response) {
+                            return response.text();
+                        }).then(function (gpxData) {
+                            // Parse gpxData here ...
+                            let gpx = new gpxParser();
+                            gpx.parse(gpxData);
+
+                            let totalDistance = gpx.tracks[0].distance.total;
+                            let totalElevation = gpx.tracks[0].elevation.pos;
+                            if (totalElevation == undefined) {
+                                totalElevation = '0';
+                            }
+                            if (totalElevation == null) {
+                                totalElevation = '0';
+                            }
+                            let totalDistanceInt = parseInt(totalDistance);
+                            let totalElevationInt = parseInt(totalElevation);
+
+                            $('#lblTotalDistance').text(totalDistanceInt + 'mt');
+                            $('#lblTotalElevation').text(totalElevationInt + 'mt');
+
+                            var pointsArray = gpx.tracks[0].points;
+                            pointsCount = pointsArray.length;
+                            //let pointStart;//Point object
+                            //let pointEnd;//Point object
+                            let ii = 0;
+                            $.each(pointsArray, function (index, value) {
+                                if (index == 0) {
+                                    pointStart = value;
+                                }
+                                if (index + 1 >= ii) {
+                                    pointEnd = value;
+                                    ii = index + 1;
+                                }
+                            });
+
+                            console.log('drawing map');
+                            drawTrack(gpx.tracks[0]);
+
+
+                            /*
+                            Ogni X metri (distanceKm) tra due punti del percorso GPX
+                            carica in cache il layer con le dimensioni di un quadrato di lato (2*latoDelTileQuadrato)
+                            */
+                            const latoDelTileQuadrato = 100; // 50; //meters
+                            const distanceKm = .03 //Km
+                            const zoomMin = 18;
+                            const zoomMax = 18;
+                            let pointN;
+                            let pointNmeno1;
+                            $.each(pointsArray, function (index, value) {
+                                indexOfCurrentPoint = index;// indexOfCurrentPoint = zero based 0,1,2,3,...
+
+                                //if (index == 0) {
+                                pointNmeno1 = value;
+                                let latLngOfPointNmeno1 = new L.latLng(pointNmeno1.lat, pointNmeno1.lon);
+                                let latLngTopLeft = GetLatLngByDistance(latLngOfPointNmeno1, (latoDelTileQuadrato / 2 * -1), (latoDelTileQuadrato / 2 * -1));
+                                let latLngBottomRight = GetLatLngByDistance(latLngOfPointNmeno1, (latoDelTileQuadrato / 2), (latoDelTileQuadrato / 2));
+                                console.log('starting seed for point number ' + index + 1);
+                                seed(latLngTopLeft.lat, latLngTopLeft.lng, latLngBottomRight.lat, latLngBottomRight.lng, zoomMin, zoomMax);
+                                //}
+
+                                //    pointN = value;
+                                //    let latLngOfPointN = new L.latLng(pointN.lat, pointN.lon);
+                                //    let latLngTopLeftOfPointN = GetLatLngByDistance(latLngOfPointN, latoDelTileQuadrato * -1, latoDelTileQuadrato * -1);
+                                //    let latLngBottomRightOfPointN = GetLatLngByDistance(latLngOfPointN, latoDelTileQuadrato, latoDelTileQuadrato);
+                                //    let distanceKmBetweenPoints = getDistanceKmBetweenPoints(pointNmeno1.lat, pointNmeno1.lon, pointN.lat, pointN.lon);
+                                //    if (distanceKmBetweenPoints > distanceKm) {
+                                //        pointNmeno1 = value;
+                                //        console.log('seed for index=' + index + ";distanceKmBetweenPoints=" + distanceKmBetweenPoints);
+                                //        seed(latLngTopLeftOfPointN.lat, latLngTopLeftOfPointN.lng, latLngBottomRightOfPointN.lat, latLngBottomRightOfPointN.lng, zoomMin, zoomMax);
+                                //    }
+                            });
+
+                        });
+                }
+
+                //Seed the base layer, for the whole world, for zoom levels zoomMin through zoomMax.
+                function seed(latTopLeft, lonTopLeft, latBottomRight, lonBottomRight, zoomMin, zoomMax) {
+                    var bbox = L.latLngBounds(L.latLng(latTopLeft, lonTopLeft), L.latLng(latBottomRight, lonBottomRight));
+                    layer.seed(bbox, zoomMin, zoomMax);
+                }
+
+                //Display seed progress on console
+                layer.on('seedprogress', function (seedData) {
+                    debugger;
+                    var percent = 100 - Math.floor(seedData.remainingLength / seedData.queueLength * 100);
+                    console.log('Seeding ' + percent + '% done');
+                    if (percent >= totalPercDownload) { totalPercDownload = percent; }
+                    let strHtml = 'download mappa porzione ' + (indexOfCurrentPoint+1) + " di " + pointsCount + ": " + totalPercDownload + '% ' + '<img src="images/Spinner-3.gif" class="img-fluid" style="max-height:32px;" />';
+                    $('#lblPercDownload').empty().append(strHtml).css('color', 'red');
+                    //$('#boxSpinnerPercDownload').show();
+                });
+                layer.on('seedend', function (seedData) {
+
+                    if ((indexOfCurrentPoint + 1) == pointsCount) {
+                        console.log('Cache seeding complete');
+                        let strHtml = 'download completato! ';
+                        $('#lblPercDownload').empty().append(strHtml).css('color', 'darkgreen');
+                        //$('#boxSpinnerPercDownload').hide();
+                    }
+                });
+            }
+
+
+            function getDistanceKmBetweenPoints(lat1, lon1, lat2, lon2) {
+                var R = 6371; // Radius of the earth in km
+                var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+                var dLon = deg2rad(lon2 - lon1);
+                var a =
+                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+                    ;
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                var d = R * c; // Distance in km
+                return d;
+            }
+
+            function deg2rad(deg) {
+                return deg * (Math.PI / 180)
+            }
+
+            //* Returns the destination point from this point having travelled the given distance (in meters)
+            function GetLatLngByDistance(latlng, metersY, metersX) {
+                //metersX, metersY: offsets from your initial position in meters
+                let lat0 = latlng.lat;
+                let lon0 = latlng.lng;
+                lat = lat0 + (180 / Math.PI) * (metersY / 6378137);
+                lon = lon0 + (180 / Math.PI) * (metersX / 6378137) / Math.cos(lat0);
+                return new L.latLng(lat, lon);
+            }
+
+            function drawTrack(track) {
+                let coordinates = track.points.map(p => [p.lat.toFixed(5), p.lon.toFixed(5)]);
+                let polyline = L.polyline(coordinates, { weight: 6, color: 'darkred' }).addTo(map);
+                //zoom the map to the polyline
+                map.fitBounds(polyline.getBounds());
+            }
+
+            function GetLocation() {
+
+                try {
+                    if (map) {
+
+                        map.locate({
+                            setView: false,
+                            enableHighAccuracy: true
+                        }).on('locationfound', function (e) {
+
+                            if (myPositionMarker == undefined) {
+                                pointCurrent = e.latlng;
+                                myPositionMarker = new L.marker(e.latlng);
+                                myPositionMarker.addTo(map);
+                                //} else {
+                                //    myPositionMarker.setLatLng(e.latlng);
+                            }
+                            myPositionMarker.setLatLng(e.latlng);
+
+                        });
+                        console.log('GetLocation started successfully');
+                    }
+                }
+                catch (err) {
+                    console.log('GetLocation error=' + err.message);
+                }
+            }
+
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = window.location.search.substring(1),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                    }
+                }
+                return false;
+            };
+
+            var descrizionePercorso = "";
+            function getGpxNameByCode(code) {
+                let gpxFileName = "";
+                switch (code) {
+                    case '0000':
+                        gpxFileName = '/gpx/0000_fossano.gpx'
+                        descrizionePercorso = "Fossano percorso cittadino 600mt per testare l'App";
+                        break;
+                    case '0001':
+                        gpxFileName = '/gpx/0001_podere_del_vescovo-baladin_2022-06-11.gpx'
+                        descrizionePercorso = "Piozzo (CN), dal Podere del Vescovo Country House al parcheggio di Baladin, 4Km attraverso i boschi; dislivello: 200mt; difficoltà: facile; tempo di percorrenza: 1h";
+                        break;
+                    case '0002':
+                        gpxFileName = '/gpx/0002_Sentiero_di_SRosalia.gpx'
+                        descrizionePercorso = "Alba (CN), Sentiero di S.Rosalia; difficoltà: medio-facile; tempo di percorrenza: 3h, lunghezza totale 11Km attorno a San Cassiano e Santa Rosalia; dislivello: 200mt";
+                        break;
+                    case '0100':
+                        gpxFileName = '/gpx/0100_Dogliani.gpx'
+                        descrizionePercorso = "Dogliani (CN), percorso a '8', due anelli con fulcro su Dogliani: difficoltà: intermedia; lunghezza totale 17Km e dislivello di 1100mt";
+                        break;
+                    case '0101':
+                        gpxFileName = '/gpx/0101_Clavesana.gpx'
+                        descrizionePercorso = "Clavesana (CN), anello 7Km: dislivello: 250mt; difficoltà: facile; tempo di percorrenza: 2h";
+                        break;
+                    default:
+                        console.log('gpxOptionSelected case else');
+                }
+                return gpxFileName;
+            }
+
+            function OpenModalDetail() {
+                let myModal = new bootstrap.Modal(document.getElementById('modalInfo'), {
+                    keyboard: false
+                });
+                myModal.show();
+                $('#lblDescrizionePercorso').text(descrizionePercorso);
+            }
+
+            function BtnBackMenuClick() {
+                //location.reload(true);
+                var urlRoot = window.location.href.split('?')[0];//rimuovo il parameter percorso=0001
+                window.location.href = urlRoot;
+            }
+
+        </script>
+</body>
+
+</html>

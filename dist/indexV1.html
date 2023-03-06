@@ -9,18 +9,13 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
     <!-- leaflet -->
-    <link href="node_modules/leaflet/dist/leaflet.css" rel="stylesheet" />
-    <script src="node_modules/leaflet/dist/leaflet.js"></script>
-    <script src="node_modules/gpxparser/dist/GPXParser.min.js"></script>
+    <link href="css/leaflet.css" rel="stylesheet" />
+    <script src="js/leaflet.js"></script>
+    <script src="js/GPXParser.min.js"></script>
 
-    <!-- Using https://allartk.github.io/leaflet.offline -->
-    <!--
-        <script src="node_modules/idb/build/umd.js"></script>
-        <script src="node_modules/leaflet.offline/dist/bundle.js"></script>
-        -->
     <!-- Using https://github.com/MazeMap/Leaflet.TileLayer.PouchDBCached -->
-    <script src="node_modules/pouchdb/dist/pouchdb.min.js"></script>
-    <script src="node_modules/leaflet.tilelayer.pouchdbcached/L.TileLayer.PouchDBCached.js"></script>
+    <script src="js/pouchdb.js"></script>
+    <script src="js/L.TileLayer.PouchDBCached.js"></script>
     <style type="text/css">
         /*  Always set the map height explicitly to define the size of the div element that contains the map.*/
         #map {
@@ -46,7 +41,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 offset-md-1 offset-lg-2 offset-xl-2">
                     <h4 style="text-align: center;">Hiking map route planner</h4>
-                    <h1 style="text-align: center;">Trekking</h1>
+                    <h1 style="text-align: center;">Mio Trekking</h1>
                     <h3 style="text-align: center;">Segui un percorso di Trekking</h3>
                     <p class="text-justify">
                         <span>
@@ -58,8 +53,10 @@
                             sulla traccia indicata.
                         </span>
                         <br />
-                        <small>Nota: per il funzionamento su smartphone l'applicazione richiede che sia attiva la
-                            funzionalità di tracciamento GPS</small>
+                        <small>
+                            Nota: per il funzionamento su smartphone l'applicazione richiede che sia attiva la
+                            funzionalità di tracciamento GPS
+                        </small>
                     </p>
                 </div>
             </div>
@@ -103,7 +100,7 @@
                         <p style="text-align:right;">
                             <span style="font-size:smaller">
                                 powered by <a class="" href="https://www.artmedia.it/" target="_blank"
-                                    title="Artmedia software house Fossano (CN)">Artmedia</a>
+                                              title="Artmedia software house Fossano (CN)">Artmedia</a>
                             </span>
                         </p>
                     </div>
@@ -119,7 +116,7 @@
 
     <!-- Modal -->
     <div class="modal fade" data-bs-backdrop="static" id="modalInfo" tabindex="-1" aria-labelledby="modalInfoLabel"
-        aria-hidden="true">
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -157,7 +154,9 @@
                     <div class="mt-4">
                         <div style="text-align:center;">
                             <button type="button" class="btn btn-success btn-lg"
-                                onclick="BtnCloseModalClick()">OK</button>
+                                    onclick="BtnCloseModalClick()">
+                                OK
+                            </button>
                             <!-- data-bs-dismiss="modal" -->
                         </div>
                     </div>
@@ -286,7 +285,7 @@
 
 
         // Seed the base layer, for the whole world, for zoom levels zoomMin through zoomMax.
-        function seed(latTopLeft, lonTopLeft, latBottomRight, lonBottomRight, zoomMin , zoomMax) {
+        function seed(latTopLeft, lonTopLeft, latBottomRight, lonBottomRight, zoomMin, zoomMax) {
             var bbox = L.latLngBounds(L.latLng(latTopLeft, lonTopLeft), L.latLng(latBottomRight, lonBottomRight));
             layer.seed(bbox, zoomMin, zoomMax);
         }
@@ -352,36 +351,35 @@
 
                         /*
                          Ogni X metri (distanceKm) tra due punti del percorso GPX
-                         carica in cache il layer con le dimensioni di un quadrato di lato (2*raggio) 
+                         carica in cache il layer con le dimensioni di un quadrato di lato (2*raggio)
                         */
                         const raggio = 50; //meters
-                        const distanceKm = .03 //Km 
+                        const distanceKm = .03 //Km
                         const zoomMin = 14;
                         const zoomMax = 18;
                         let pointN;
                         let pointNmeno1;
-                        $.each(pointsArray, function (index, value) {
-                            if (index == 0) {
-                                pointNmeno1 = value;
-                                let latLngOfPointNmeno1 = new L.latLng(pointNmeno1.lat, pointNmeno1.lon);
-                                let latLngTopLeft = GetLatLngByDistance(latLngOfPointNmeno1, raggio*-1, raggio*-1);
-                                let latLngBottomRight = GetLatLngByDistance(latLngOfPointNmeno1, raggio, raggio);
-                                console.log('seed for index=' + index);                    
-                                seed(latLngTopLeft.lat, latLngTopLeft.lng, latLngBottomRight.lat, latLngBottomRight.lng, zoomMin, zoomMax);
-                            }
+                        //$.each(pointsArray, function (index, value) {
+                        //    if (index == 0) {
+                        //        pointNmeno1 = value;
+                        //        let latLngOfPointNmeno1 = new L.latLng(pointNmeno1.lat, pointNmeno1.lon);
+                        //        let latLngTopLeft = GetLatLngByDistance(latLngOfPointNmeno1, raggio * -1, raggio * -1);
+                        //        let latLngBottomRight = GetLatLngByDistance(latLngOfPointNmeno1, raggio, raggio);
+                        //        console.log('seed for index=' + index);
+                        //        seed(latLngTopLeft.lat, latLngTopLeft.lng, latLngBottomRight.lat, latLngBottomRight.lng, zoomMin, zoomMax);
+                        //    }
 
-                            pointN = value;
-                            let latLngOfPointN = new L.latLng(pointN.lat, pointN.lon);
-                            let latLngTopLeftOfPointN = GetLatLngByDistance(latLngOfPointN, raggio*-1, raggio*-1);
-                            let latLngBottomRightOfPointN = GetLatLngByDistance(latLngOfPointN, raggio, raggio);
-                            let distanceKmBetweenPoints = getDistanceKmBetweenPoints(pointNmeno1.lat, pointNmeno1.lon, pointN.lat, pointN.lon);
-                            if ( distanceKmBetweenPoints > distanceKm) {
-                                pointNmeno1 = value;
-                                console.log('seed for index=' + index + ";distanceKmBetweenPoints=" + distanceKmBetweenPoints); 
-                                seed(latLngTopLeftOfPointN.lat, latLngTopLeftOfPointN.lng, latLngBottomRightOfPointN.lat, latLngBottomRightOfPointN.lng, zoomMin, zoomMax);
-                            }
-
-                        });
+                        //    pointN = value;
+                        //    let latLngOfPointN = new L.latLng(pointN.lat, pointN.lon);
+                        //    let latLngTopLeftOfPointN = GetLatLngByDistance(latLngOfPointN, raggio * -1, raggio * -1);
+                        //    let latLngBottomRightOfPointN = GetLatLngByDistance(latLngOfPointN, raggio, raggio);
+                        //    let distanceKmBetweenPoints = getDistanceKmBetweenPoints(pointNmeno1.lat, pointNmeno1.lon, pointN.lat, pointN.lon);
+                        //    if (distanceKmBetweenPoints > distanceKm) {
+                        //        pointNmeno1 = value;
+                        //        console.log('seed for index=' + index + ";distanceKmBetweenPoints=" + distanceKmBetweenPoints);
+                        //        seed(latLngTopLeftOfPointN.lat, latLngTopLeftOfPointN.lng, latLngBottomRightOfPointN.lat, latLngBottomRightOfPointN.lng, zoomMin, zoomMax);
+                        //    }
+                        //});
 
                     });
             }
@@ -417,7 +415,7 @@
 
 
         /*
-         * Returns the destination point from this point having travelled the given distance (in meters) 
+         * Returns the destination point from this point having travelled the given distance (in meters)
          */
         function GetLatLngByDistance(latlng, metersY, metersX) {
             //metersX, metersY: offsets from your initial position in meters
